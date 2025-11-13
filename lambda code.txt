@@ -1,0 +1,49 @@
+import boto3
+import json
+
+def lambda_handler(event, context):
+    s3 = boto3.client('s3')
+    sns = boto3.client('sns')
+    bucket_name = 's3-smartcitytraffic'
+    file_key = 'dataset_2__partial_data.json'
+    sns_topic_arn = 'arn:aws:sns:ap-south-1:273354649801:smarttraffic'
+
+
+
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET"
+    }
+
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=file_key)
+        data = json.loads(response['Body'].read().decode('utf-8'))
+
+        # Check if any junction has AQI > 150
+        alert_junctions = []
+        for junction in data:
+            aqi = junction.get('aqi')
+            if aqi is not None and aqi > 150:
+                alert_junctions.append(junction['id'])
+
+        if alert_junctions:
+            message = f"Alert: High AQI detected at junction(s): {', '.join(alert_junctions)}"
+            sns.publish(
+                TopicArn=sns_topic_arn,
+                Message=message,
+                Subject='Smart Traffic Alert: High AQI Detected'
+            )
+
+        return {
+            'statusCode': 200,
+            'headers': headers,
+            'body': json.dumps(data)
+        }
+
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': headers,
+            'body': json.dumps({'error': str(e)})
+        }

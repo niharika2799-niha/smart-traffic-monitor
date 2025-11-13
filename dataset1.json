@@ -1,0 +1,8 @@
+[
+  { "junction": "J1", "aqi": 190, "noiseLevel": 85, "humidity": 70 },
+  { "junction": "J2", "aqi": 110, "noiseLevel": 60, "humidity": 60 },
+  { "junction": "J3", "aqi": 45, "noiseLevel": 50, "humidity": 50 },
+  { "junction": "J4", "aqi": 210, "noiseLevel": 90, "humidity": 80 },
+  { "junction": "J5", "aqi": 75, "noiseLevel": 70, "humidity": 65 },
+  { "junction": "J6", "aqi": 90, "noiseLevel": 55, "humidity": 55 }
+]
